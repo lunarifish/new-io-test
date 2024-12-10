@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="blog-wrapper blog-post-page plugin-blog plugin-id-default" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.6.3">
+<title data-rh="true">systemd 杂谈 | sb</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://your-docusaurus-site.example.com/blog/test"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="systemd 杂谈 | sb"><meta data-rh="true" name="description" content="- 程序要开机自启"><meta data-rh="true" property="og:description" content="- 程序要开机自启"><meta data-rh="true" property="og:type" content="article"><meta data-rh="true" property="article:published_time" content="2023-02-02T00:00:00.000Z"><meta data-rh="true" property="article:tag" content="linux,systemd"><link data-rh="true" rel="canonical" href="https://your-docusaurus-site.example.com/blog/test"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.example.com/blog/test" hreflang="en"><link data-rh="true" rel="alternate" href="https://your-docusaurus-site.example.com/blog/test" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","@id":"https://your-docusaurus-site.example.com/blog/test","mainEntityOfPage":"https://your-docusaurus-site.example.com/blog/test","url":"https://your-docusaurus-site.example.com/blog/test","headline":"systemd 杂谈","name":"systemd 杂谈","description":"- 程序要开机自启","datePublished":"2023-02-02T00:00:00.000Z","author":[],"keywords":[],"isPartOf":{"@type":"Blog","@id":"https://your-docusaurus-site.example.com/blog","name":"Blog"}}</script><link rel="alternate" type="application/rss+xml" href="/blog/rss.xml" title="sb RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/blog/atom.xml" title="sb Atom Feed"><link rel="stylesheet" href="/assets/css/styles.d0b04c1c.css">
+<script src="/assets/js/runtime~main.adb65f4a.js" defer="defer"></script>
+<script src="/assets/js/main.3e3b3368.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const n=new URLSearchParams(window.location.search).entries();for(var[t,e]of n)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top navbarHideable_m1mJ"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/"></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/">home</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/blog">blog</a><a class="navbar__item navbar__link" href="/portfolio">portfolio</a></div><div class="navbar__items navbar__items--right"><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite" aria-pressed="false"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="container margin-vert--lg"><div class="row"><aside class="col col--3"><nav class="sidebar_re4s thin-scrollbar" aria-label="Blog recent posts navigation"><div class="sidebarItemTitle_pO2u margin-bottom--md">Recent posts</div><div role="group"><h3 class="yearGroupHeading_rMGB">2023</h3><ul class="sidebarItemList_Yudw clean-list"><li class="sidebarItem__DBe"><a aria-current="page" class="sidebarItemLink_mo7H sidebarItemLinkActive_I1ZP" href="/blog/test">systemd 杂谈</a></li></ul></div><div role="group"><h3 class="yearGroupHeading_rMGB">2021</h3><ul class="sidebarItemList_Yudw clean-list"><li class="sidebarItem__DBe"><a class="sidebarItemLink_mo7H" href="/blog/welcome">Welcome</a></li><li class="sidebarItem__DBe"><a class="sidebarItemLink_mo7H" href="/blog/mdx-blog-post">MDX Blog Post</a></li></ul></div><div role="group"><h3 class="yearGroupHeading_rMGB">2019</h3><ul class="sidebarItemList_Yudw clean-list"><li class="sidebarItem__DBe"><a class="sidebarItemLink_mo7H" href="/blog/long-blog-post">Long Blog Post</a></li><li class="sidebarItem__DBe"><a class="sidebarItemLink_mo7H" href="/blog/first-blog-post">First Blog Post</a></li></ul></div></nav></aside><main class="col col--7"><article><header><h1 class="title_f1Hy">systemd 杂谈</h1><div class="container_mt6G margin-vert--md"><time datetime="2023-02-02T00:00:00.000Z">February 2, 2023</time> · <!-- -->6 min read</div></header><div id="__blog-post-container" class="markdown"><ul>
+<li>
+<p>程序要开机自启</p>
+</li>
+<li>
+<p>在 linux 下使用串口、socketcan 时总是免不了要先打一大堆命令赋权、启动</p>
+</li>
+<li>
+<p>有多个 usb 设备的情况下不好区分谁是谁，设备文件顺序还会变</p>
+</li>
+</ul>
+<p>利用好当今大多数发行版都有的 systemd，它的子组件如 udev、systemd-networkd 等等就可以解决这些麻烦问题。
+如果以后遇到类似的问题，那 systemd 大概率也是有办法解决的。不要小看 PID=1 的力量。:)))</p>
+<!-- -->
+<p>[图片]</p>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="systemd-networkd">systemd-networkd<a href="#systemd-networkd" class="hash-link" aria-label="Direct link to systemd-networkd" title="Direct link to systemd-networkd">​</a></h2>
+<h3 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="socketcan-自动-bringup">socketcan 自动 bringup<a href="#socketcan-自动-bringup" class="hash-link" aria-label="Direct link to socketcan 自动 bringup" title="Direct link to socketcan 自动 bringup">​</a></h3>
+<p>详情：<a href="https://wiki.archlinuxcn.org/wiki/Systemd-networkd" target="_blank" rel="noopener noreferrer">https://wiki.archlinuxcn.org/wiki/Systemd-networkd</a></p>
+<p>systemd-networkd 用来按规则自动配置 netdev，正巧 can 在 linux 下就是 netdev</p>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><p>systemd-networkd 虽然可以配置 netdev，但不要举一反三去用它配置以太网接口。目前大多数 linux 发行版都用另外一个叫 NetworkManager 的软件来管理网络，同时使用两个软件管理网络可能会引起一些奇怪问题。</p><p>为什么不用 NetworkManager 管理 CAN？因为它没有这个功能。</p><p>说到这里了，就点名另外一个软件，netplan，也不要用它。</p></div></div>
+<p>输入 <code>systemctl status systemd-networkd</code> 查看 systemd-networkd 有没有启动：</p>
+<p>[图片]</p>
+<p>如果显示 inactive 则输入 <code>systemctl start systemd-networkd</code> 启动服务，再输入 <code>systemctl enable systemd-networkd</code> 让服务开机自启。</p>
+<p>[图片]</p>
+<p>在<code>/etc/systemd/network/</code>文件夹下建立规则 <code>80-can.network</code> 如下：</p>
+<p>暂时无法在飞书文档外展示此内容</p>
+<p>此时系统就会自动按规则配置所有 CAN 接口波特率为 1M，并且启动他们，不需要再手动 <code>ip link set</code> 了。</p>
+<p>重启一次系统查看效果，如果不想重启，则重启一次 systemd-networkd 服务：<code>systemctl restart systemd-networkd</code></p>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="udev">udev<a href="#udev" class="hash-link" aria-label="Direct link to udev" title="Direct link to udev">​</a></h2>
+<p>udev 可以捕获内核产生的设备添加/移除事件，按配置的规则根据端口号、PID、VID 等等信息自动识别并配置设备（赋权、创建符号链接等等）</p>
+<p>详情：<a href="https://www.jinbuguo.com/systemd/udev.html" target="_blank" rel="noopener noreferrer">https://www.jinbuguo.com/systemd/udev.html</a></p>
+<h3 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="固定-usb-设备自动赋权">固定 USB 设备+自动赋权<a href="#固定-usb-设备自动赋权" class="hash-link" aria-label="Direct link to 固定 USB 设备+自动赋权" title="Direct link to 固定 USB 设备+自动赋权">​</a></h3>
+<p>USB 设备都有 VID 和 PID 两个识别符，输入 lsusb 列出目前插入的所有 usb 设备：</p>
+<p>[图片]</p>
+<p>以 <code>Bus 001 Device 003: ID 8087:0029 Intel Corp. AX200 Bluetooth</code> 为例：</p>
+<ul>
+<li>
+<p>busnum=1</p>
+</li>
+<li>
+<p>devicenum=3</p>
+</li>
+<li>
+<p>vid=8087</p>
+</li>
+<li>
+<p>pid=0029</p>
+</li>
+</ul>
+<p>一般来说只根据 vid 和 pid 就可以确定一个唯一的 usb 设备，但如果有两个完全一样的 usb 设备，就还需要额外根据 busnum 和 devicenum 来确定一个唯一的设备。</p>
+<p>假设现在有一个 usb 转串口的 CH340 模块吧：</p>
+<p>[图片]</p>
+<p>[图片]</p>
+<p>每次使用它之前，都要输入 <code>sudo chmod 666 /dev/ttyUSB0</code> 来赋权，而且如果有多个一样的模块，就要指定赋权插在某个 USB 端口上的，PID 为多少，VID 为多少的设备，仅仅通过/dev 下的文件名肯定
+是区分不开的。</p>
+<p>在<code>/etc/udev/rules.d/</code>文件夹下建立规则 <code>100-usbserial.rules</code> 如下：</p>
+<p>暂时无法在飞书文档外展示此内容</p>
+<p>刷新 udev：</p>
+<p>暂时无法在飞书文档外展示此内容</p>
+<p>此时在/dev 里可以看到一个叫 my_usb_serial 的文件，它就是经过 udev 配置之后的，之前看到的 ttyUSB0。之后每次插入符合规则的 usb 设备时，这个文件都会立即出现。</p>
+<p>[图片]</p>
+<p>同理也可以利用 udev 固定 USB 转 CAN 模块，像下面这样，就可以在 busnum=3, devnum=7 的 usb 转 can 模块插入之后创建一个叫 my_usb_can 的网络接口：</p>
+<p>暂时无法在飞书文档外展示此内容</p>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="systemdservice">systemd.service<a href="#systemdservice" class="hash-link" aria-label="Direct link to systemd.service" title="Direct link to systemd.service">​</a></h2>
+<p>详情：<a href="https://www.jinbuguo.com/systemd/systemd.service.html" target="_blank" rel="noopener noreferrer">https://www.jinbuguo.com/systemd/systemd.service.html</a></p>
+<h3 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="开机自启">开机自启<a href="#开机自启" class="hash-link" aria-label="Direct link to 开机自启" title="Direct link to 开机自启">​</a></h3>
+<p>把要开机自启的动作编写成一个 service，注册给 systemd 即可实现可控、稳定的开机自启以及 fail retry。</p>
+<p>比如要让一个 ROS 节点自启，并且崩溃之后可以自己尝试再自启的话，就先写这样一个启动脚本：</p>
+<p>暂时无法在飞书文档外展示此内容</p>
+<p>然后，编写服务文件 <code>control_node.service</code></p>
+<ul>
+<li>
+<p><code>After=network.target</code>：在系统启动阶段达到 network 目标之后启动这个服务</p>
+</li>
+<li>
+<p><code>ExecStart=/home/a/ws/launch.sh</code>：设置 entry 为启动脚本<code>/home/a/ws/launch.sh</code></p>
+</li>
+<li>
+<p><code>Restart=always</code>：自动重启</p>
+</li>
+</ul>
+<p>暂时无法在飞书文档外展示此内容</p>
+<p>把这个 control_node.service 复制到<code>/usr/lib/systemd/system</code> 目录下，然后执行 <code>systemd daemon-reload</code> 重启 systemd daemon。</p>
+<p>此时执行 <code>systemctl status control_node</code> 就可以看到注册的服务了：</p>
+<p>[图片]</p>
+<p>执行 <code>systemctl start control_node</code> 即可启动服务，执行 <code>systemctl enable control_node</code> 即可让服务开机自启。</p>
+<h3 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="不启动桌面环境">不启动桌面环境<a href="#不启动桌面环境" class="hash-link" aria-label="Direct link to 不启动桌面环境" title="Direct link to 不启动桌面环境">​</a></h3>
+<p>为了节省性能，或者是为了加快开机速度等等，可以修改 systemd 的默认启动 target 为 <code>multi-user.target</code>，只启动到终端环境里  ：</p>
+<p>暂时无法在飞书文档外展示此内容</p>
+<p>如果要恢复桌面环境，把默认 target 改回 <code>graphical.target</code> 即可：</p>
+<p>暂时无法在飞书文档外展示此内容</p></div><footer class="docusaurus-mt-lg"><div class="row margin-top--sm theme-blog-footer-edit-meta-row"><div class="col"><b>Tags:</b><ul class="tags_jXut padding--none margin-left--sm"><li class="tag_QGVx"><a class="tag_zVej tagRegular_sFm0" href="/blog/tags/linux">linux</a></li><li class="tag_QGVx"><a class="tag_zVej tagRegular_sFm0" href="/blog/tags/systemd">systemd</a></li></ul></div></div><div class="row margin-top--sm theme-blog-footer-edit-meta-row"><div class="col"><a href="https://github.com/lunarfish/lunarifish.github.io/tree/main/blog/blog/2023-02-02-test.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Blog post page navigation"><a class="pagination-nav__link pagination-nav__link--next" href="/blog/welcome"><div class="pagination-nav__sublabel">Older post</div><div class="pagination-nav__label">Welcome</div></a></nav></main><div class="col col--2"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#systemd-networkd" class="table-of-contents__link toc-highlight">systemd-networkd</a><ul><li><a href="#socketcan-自动-bringup" class="table-of-contents__link toc-highlight">socketcan 自动 bringup</a></li></ul></li><li><a href="#udev" class="table-of-contents__link toc-highlight">udev</a><ul><li><a href="#固定-usb-设备自动赋权" class="table-of-contents__link toc-highlight"> 固定 USB 设备+自动赋权</a></li></ul></li><li><a href="#systemdservice" class="table-of-contents__link toc-highlight">systemd.service</a><ul><li><a href="#开机自启" class="table-of-contents__link toc-highlight">开机自启</a></li><li><a href="#不启动桌面环境" class="table-of-contents__link toc-highlight">不启动桌面环境</a></li></ul></li></ul></div></div></div></div></div></div>
+</body>
+</html>
