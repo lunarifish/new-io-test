@@ -1,0 +1,139 @@
+---
+slug: test
+title: systemd 杂谈
+tags: [linux, systemd]
+---
+
+- 程序要开机自启
+
+- 在 linux 下使用串口、socketcan 时总是免不了要先打一大堆命令赋权、启动
+
+- 有多个 usb 设备的情况下不好区分谁是谁，设备文件顺序还会变
+
+利用好当今大多数发行版都有的 systemd，它的子组件如 udev、systemd-networkd 等等就可以解决这些麻烦问题。
+如果以后遇到类似的问题，那 systemd 大概率也是有办法解决的。不要小看 PID=1 的力量。:)))
+
+{/* truncate */}
+
+[图片]
+
+## systemd-networkd
+
+### socketcan 自动 bringup
+
+详情：https://wiki.archlinuxcn.org/wiki/Systemd-networkd
+
+systemd-networkd 用来按规则自动配置 netdev，正巧 can 在 linux 下就是 netdev
+
+:::tip
+systemd-networkd 虽然可以配置 netdev，但不要举一反三去用它配置以太网接口。目前大多数 linux 发行版都用另外一个叫 NetworkManager 的软件来管理网络，同时使用两个软件管理网络可能会引起一些奇怪问题。
+
+为什么不用 NetworkManager 管理 CAN？因为它没有这个功能。
+
+说到这里了，就点名另外一个软件，netplan，也不要用它。
+:::
+
+输入 `systemctl status systemd-networkd` 查看 systemd-networkd 有没有启动：
+
+[图片]
+
+如果显示 inactive 则输入 `systemctl start systemd-networkd` 启动服务，再输入 `systemctl enable systemd-networkd` 让服务开机自启。
+
+[图片]
+
+在`/etc/systemd/network/`文件夹下建立规则 `80-can.network` 如下：
+
+暂时无法在飞书文档外展示此内容
+
+此时系统就会自动按规则配置所有 CAN 接口波特率为 1M，并且启动他们，不需要再手动 `ip link set` 了。
+
+重启一次系统查看效果，如果不想重启，则重启一次 systemd-networkd 服务：`systemctl restart systemd-networkd`
+
+## udev
+
+udev 可以捕获内核产生的设备添加/移除事件，按配置的规则根据端口号、PID、VID 等等信息自动识别并配置设备（赋权、创建符号链接等等）
+
+详情：https://www.jinbuguo.com/systemd/udev.html
+
+### 固定 USB 设备+自动赋权
+
+USB 设备都有 VID 和 PID 两个识别符，输入 lsusb 列出目前插入的所有 usb 设备：
+
+[图片]
+
+以 `Bus 001 Device 003: ID 8087:0029 Intel Corp. AX200 Bluetooth` 为例：
+
+- busnum=1
+
+- devicenum=3
+
+- vid=8087
+
+- pid=0029
+
+一般来说只根据 vid 和 pid 就可以确定一个唯一的 usb 设备，但如果有两个完全一样的 usb 设备，就还需要额外根据 busnum 和 devicenum 来确定一个唯一的设备。
+
+假设现在有一个 usb 转串口的 CH340 模块吧：
+
+[图片]
+
+[图片]
+
+每次使用它之前，都要输入 `sudo chmod 666 /dev/ttyUSB0` 来赋权，而且如果有多个一样的模块，就要指定赋权插在某个 USB 端口上的，PID 为多少，VID 为多少的设备，仅仅通过/dev 下的文件名肯定
+是区分不开的。
+
+在`/etc/udev/rules.d/`文件夹下建立规则 `100-usbserial.rules` 如下：
+
+暂时无法在飞书文档外展示此内容
+
+刷新 udev：
+
+暂时无法在飞书文档外展示此内容
+
+此时在/dev 里可以看到一个叫 my_usb_serial 的文件，它就是经过 udev 配置之后的，之前看到的 ttyUSB0。之后每次插入符合规则的 usb 设备时，这个文件都会立即出现。
+
+[图片]
+
+同理也可以利用 udev 固定 USB 转 CAN 模块，像下面这样，就可以在 busnum=3, devnum=7 的 usb 转 can 模块插入之后创建一个叫 my_usb_can 的网络接口：
+
+暂时无法在飞书文档外展示此内容
+
+## systemd.service
+
+详情：https://www.jinbuguo.com/systemd/systemd.service.html
+
+### 开机自启
+
+把要开机自启的动作编写成一个 service，注册给 systemd 即可实现可控、稳定的开机自启以及 fail retry。
+
+比如要让一个 ROS 节点自启，并且崩溃之后可以自己尝试再自启的话，就先写这样一个启动脚本：
+
+暂时无法在飞书文档外展示此内容
+
+然后，编写服务文件 `control_node.service`
+
+- `After=network.target`：在系统启动阶段达到 network 目标之后启动这个服务
+
+- `ExecStart=/home/a/ws/launch.sh`：设置 entry 为启动脚本`/home/a/ws/launch.sh`
+
+- `Restart=always`：自动重启
+
+暂时无法在飞书文档外展示此内容
+
+把这个 control_node.service 复制到`/usr/lib/systemd/system` 目录下，然后执行 `systemd daemon-reload` 重启 systemd daemon。
+
+此时执行 `systemctl status control_node` 就可以看到注册的服务了：
+
+[图片]
+
+执行 `systemctl start control_node` 即可启动服务，执行 `systemctl enable control_node` 即可让服务开机自启。
+
+### 不启动桌面环境
+
+为了节省性能，或者是为了加快开机速度等等，可以修改 systemd 的默认启动 target 为 `multi-user.target`，只启动到终端环境里：
+
+暂时无法在飞书文档外展示此内容
+
+如果要恢复桌面环境，把默认 target 改回 `graphical.target` 即可：
+
+暂时无法在飞书文档外展示此内容
