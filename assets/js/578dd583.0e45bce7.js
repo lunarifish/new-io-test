@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkgithubio=self.webpackChunkgithubio||[]).push([[713],{5113:e=>{e.exports=JSON.parse('{"metadata":{"permalink":"/new-io-test/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":5,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

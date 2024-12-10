@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkgithubio=self.webpackChunkgithubio||[]).push([[903],{1912:t=>{t.exports=JSON.parse('{"blogBasePath":"/new-io-test/blog","blogTitle":"Blog","authorsListPath":"/new-io-test/blog/authors"}')}}]);
